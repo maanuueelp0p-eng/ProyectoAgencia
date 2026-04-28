@@ -12,17 +12,34 @@ public abstract class Viaje {
         this.precioBase = precioBase;
     }
 
-    public void setHotel(Hotel h) { this.hotelAsociado = h; }
-    public Hotel getHotel() { return hotelAsociado; }
-    public String getId() { return id; }
-    public String getDestino() { return destino; }
+    public void setHotel(Hotel h) {
+        this.hotelAsociado = h;
+    }
 
-    //Metodo a implementar
+    public Hotel getHotel() {
+        return hotelAsociado;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getOrigen() {   // ← AÑADIDO
+        return origen;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
     public abstract double calcularPrecioTotal();
 
     @Override
     public String toString() {
-        String infoHotel = (hotelAsociado != null) ? " + Hotel: " + hotelAsociado.getNombre() : " (Sin hotel)";
+        String infoHotel = (hotelAsociado != null)
+                ? " + Hotel: " + hotelAsociado.getNombre()
+                : " (Sin hotel)";
+
         return "ID: [" + id + "] " + origen + " -> " + destino + infoHotel;
     }
 }
