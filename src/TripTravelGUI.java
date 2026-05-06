@@ -108,13 +108,17 @@ public class TripTravelGUI extends JFrame {
         JTextField fecha = new JTextField(10);
         JButton reservar = new JButton("Reservar");
 
-        // BUSCAR
+        // BUSCAR por origen, destino, tipo y hotel
         btnBuscar.addActionListener(e -> {
             String t = buscar.getText().toLowerCase();
             tableModel.setRowCount(0);
 
             for (String[] v : VIAJES) {
-                if (v[2].toLowerCase().contains(t)) {
+                if (v[1].toLowerCase().contains(t) ||   // Origen
+                        v[2].toLowerCase().contains(t) ||   // Destino
+                        v[3].toLowerCase().contains(t) ||   // Tipo
+                        v[4].toLowerCase().contains(t)) {   // Hotel
+
                     double total = Double.parseDouble(v[5]) + Double.parseDouble(v[6]);
                     tableModel.addRow(new Object[]{
                             v[0],v[1],v[2],v[3],v[4],total
@@ -174,7 +178,7 @@ public class TripTravelGUI extends JFrame {
             saldo -= precio;
             actualizarSaldo();
 
-            // 🎫 TICKET COMPLETO
+            // TICKET COMPLETO
             String ticket =
                     "=========== TICKET DE VIAJE ===========\n" +
                             "ID VIAJE:      " + id + "\n" +
@@ -184,18 +188,18 @@ public class TripTravelGUI extends JFrame {
                             "TIPO:          " + tipo + "\n" +
                             "FECHA:         " + f + "\n" +
                             "--------------------------------------\n" +
-                            "💼 DETALLE DEL VIAJE\n" +
+                            "DETALLE DEL VIAJE\n" +
                             "TOTAL:         " + precio + " EUR\n" +
                             "--------------------------------------\n" +
-                            "🏨 HOTEL:       " + hotel + "\n" +
+                            "HOTEL:         " + hotel + "\n" +
                             "--------------------------------------\n" +
-                            "💰 SALDO RESTANTE: " + saldo + " EUR\n" +
+                            "SALDO RESTANTE: " + saldo + " EUR\n" +
                             "=======================================";
 
             JOptionPane.showMessageDialog(this,ticket);
         });
 
-        p.add(new JLabel("Buscar:"));
+        p.add(new JLabel("Buscar origen/destino:"));
         p.add(buscar);
         p.add(btnBuscar);
         p.add(btnTodos);
