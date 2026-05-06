@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyDreams - Agencia de Vuelos</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        header {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            font-size: 32px;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #00c6ff;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                        url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .hero button {
+            padding: 12px 25px;
+            border: none;
+            background: #00c6ff;
+            color: white;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero button:hover {
+            background: #0072ff;
+        }
+
+        .search-box {
+            background: white;
+            margin: -80px auto 40px;
+            padding: 30px;
+            width: 85%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .form input, .form select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .form button {
+            grid-column: span 2;
+            padding: 12px;
+            border: none;
+            background: #1e3c72;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .features {
+            padding: 60px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 85%;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <span>✈️</span> SkyDreams
+    </div>
+    <nav>
+        <a href="#">Inicio</a>
+        <a href="#">Vuelos</a>
+        <a href="#">Ofertas</a>
+        <a href="#">Contacto</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Vuela por el mundo al mejor precio</h1>
+    <p>Encuentra ofertas increíbles en vuelos en segundos</p>
+    <button>Buscar ahora</button>
+</section>
+
+<section class="search-box">
+    <h2>Buscar vuelos</h2>
+
+    <div class="form">
+        <input type="text" placeholder="Origen">
+        <input type="text" placeholder="Destino">
+        <input type="date">
+        <input type="date">
+        <select>
+            <option>1 pasajero</option>
+            <option>2 pasajeros</option>
+            <option>3 pasajeros</option>
+        </select>
+        <button>Buscar</button>
+    </div>
+
+    <!-- TU SCRIPT PERSONAL AQUÍ -->
+    <div id="buscador-vuelos"></div>
+</section>
+
+<section class="features">
+    <div class="card">
+        <h3>✈️ Mejores precios</h3>
+        <p>Comparamos cientos de aerolíneas para darte el mejor precio.</p>
+    </div>
+
+    <div class="card">
+        <h3>🌍 Destinos globales</h3>
+        <p>Viaja a cualquier parte del mundo fácilmente.</p>
+    </div>
+
+    <div class="card">
+        <h3>⚡ Reserva rápida</h3>
+        <p>Encuentra y reserva tu vuelo en pocos segundos.</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 SkyDreams - Agencia de vuelos</p>
+</footer>
+
+<!-- TU SCRIPT JS -->
+<!-- <script src="tu-script.js"></script> -->
+
+</body>
+</html>
