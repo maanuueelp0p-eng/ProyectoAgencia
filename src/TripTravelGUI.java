@@ -2,7 +2,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -54,7 +56,7 @@ public class TripTravelGUI extends JFrame {
 
     private JPanel panelTop() {
         JPanel p = new JPanel();
-        p.setBackground(new Color(30,80,160));
+        p.setBackground(new Color(30, 80, 160));
 
         JTextField saldoField = new JTextField(8);
         JButton btn = new JButton("Establecer");
@@ -67,7 +69,7 @@ public class TripTravelGUI extends JFrame {
                 saldo = Double.parseDouble(saldoField.getText());
                 actualizarSaldo();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,"Numero invalido");
+                JOptionPane.showMessageDialog(this, "Numero invalido");
             }
         });
 
@@ -80,8 +82,8 @@ public class TripTravelGUI extends JFrame {
     }
 
     private JScrollPane tablaPanel() {
-        String[] cols = {"ID","Origen","Destino","Tipo","Hotel","Precio"};
-        tableModel = new DefaultTableModel(cols,0);
+        String[] cols = {"ID", "Origen", "Destino", "Tipo", "Hotel", "Precio"};
+        tableModel = new DefaultTableModel(cols, 0);
         cargar();
 
         tabla = new JTable(tableModel);
@@ -93,7 +95,7 @@ public class TripTravelGUI extends JFrame {
         for (String[] v : VIAJES) {
             double total = Double.parseDouble(v[5]) + Double.parseDouble(v[6]);
             tableModel.addRow(new Object[]{
-                    v[0],v[1],v[2],v[3],v[4],total
+                    v[0], v[1], v[2], v[3], v[4], total
             });
         }
     }
@@ -114,14 +116,14 @@ public class TripTravelGUI extends JFrame {
             tableModel.setRowCount(0);
 
             for (String[] v : VIAJES) {
-                if (v[1].toLowerCase().contains(t) ||   // Origen
-                        v[2].toLowerCase().contains(t) ||   // Destino
-                        v[3].toLowerCase().contains(t) ||   // Tipo
-                        v[4].toLowerCase().contains(t)) {   // Hotel
+                if (v[1].toLowerCase().contains(t) ||
+                        v[2].toLowerCase().contains(t) ||
+                        v[3].toLowerCase().contains(t) ||
+                        v[4].toLowerCase().contains(t)) {
 
                     double total = Double.parseDouble(v[5]) + Double.parseDouble(v[6]);
                     tableModel.addRow(new Object[]{
-                            v[0],v[1],v[2],v[3],v[4],total
+                            v[0], v[1], v[2], v[3], v[4], total
                     });
                 }
             }
@@ -134,7 +136,7 @@ public class TripTravelGUI extends JFrame {
 
             int fila = tabla.getSelectedRow();
             if (fila < 0) {
-                JOptionPane.showMessageDialog(this,"Selecciona un viaje");
+                JOptionPane.showMessageDialog(this, "Selecciona un viaje");
                 return;
             }
 
@@ -148,55 +150,58 @@ public class TripTravelGUI extends JFrame {
             try {
                 fechaViaje = LocalDate.parse(f, fmt);
             } catch (DateTimeParseException ex) {
-                JOptionPane.showMessageDialog(this,"Fecha invalida");
+                JOptionPane.showMessageDialog(this, "Fecha invalida");
                 return;
             }
 
-            // NO PASADAS NI HOY
             if (!fechaViaje.isAfter(LocalDate.now())) {
-                JOptionPane.showMessageDialog(this,
-                        "La fecha debe ser futura");
+                JOptionPane.showMessageDialog(this, "La fecha debe ser futura");
                 return;
             }
 
             int modelRow = tabla.convertRowIndexToModel(fila);
 
-            String id = tableModel.getValueAt(modelRow,0).toString();
-            String origen = tableModel.getValueAt(modelRow,1).toString();
-            String destino = tableModel.getValueAt(modelRow,2).toString();
-            String tipo = tableModel.getValueAt(modelRow,3).toString();
-            String hotel = tableModel.getValueAt(modelRow,4).toString();
-            double precio = Double.parseDouble(
-                    tableModel.getValueAt(modelRow,5).toString()
-            );
+            String id      = tableModel.getValueAt(modelRow, 0).toString();
+            String origen  = tableModel.getValueAt(modelRow, 1).toString();
+            String destino = tableModel.getValueAt(modelRow, 2).toString();
+            String tipo    = tableModel.getValueAt(modelRow, 3).toString();
+            String hotel   = tableModel.getValueAt(modelRow, 4).toString();
+            double precio  = Double.parseDouble(tableModel.getValueAt(modelRow, 5).toString());
 
             if (saldo < precio) {
-                JOptionPane.showMessageDialog(this,"Saldo insuficiente");
+                JOptionPane.showMessageDialog(this, "Saldo insuficiente");
                 return;
             }
 
             saldo -= precio;
             actualizarSaldo();
 
-            // TICKET COMPLETO
-            String ticket =
-                    "=========== TICKET DE VIAJE ===========\n" +
-                            "ID VIAJE:      " + id + "\n" +
-                            "--------------------------------------\n" +
-                            "ORIGEN:        " + origen + "\n" +
-                            "DESTINO:       " + destino + "\n" +
-                            "TIPO:          " + tipo + "\n" +
-                            "FECHA:         " + f + "\n" +
-                            "--------------------------------------\n" +
-                            "DETALLE DEL VIAJE\n" +
-                            "TOTAL:         " + precio + " EUR\n" +
-                            "--------------------------------------\n" +
-                            "HOTEL:         " + hotel + "\n" +
-                            "--------------------------------------\n" +
-                            "SALDO RESTANTE: " + saldo + " EUR\n" +
-                            "=======================================";
+            // Número de reserva único basado en timestamp
+            String numReserva = "TT-" + LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-            JOptionPane.showMessageDialog(this,ticket);
+            String ticket =
+                    "=========================================\n" +
+                            "           TICKET DE VIAJE               \n" +
+                            "=========================================\n" +
+                            "N. RESERVA:     " + numReserva + "\n" +
+                            "-----------------------------------------\n" +
+                            "ID VIAJE:       " + id + "\n" +
+                            "ORIGEN:         " + origen + "\n" +
+                            "DESTINO:        " + destino + "\n" +
+                            "TIPO:           " + tipo + "\n" +
+                            "FECHA:          " + f + "\n" +
+                            "-----------------------------------------\n" +
+                            "HOTEL:          " + hotel + "\n" +
+                            "-----------------------------------------\n" +
+                            "TOTAL:          " + String.format("%.2f", precio) + " EUR\n" +
+                            "SALDO RESTANTE: " + String.format("%.2f", saldo) + " EUR\n" +
+                            "=========================================\n" +
+                            "       Gracias por viajar con TripTravel  \n" +
+                            "=========================================";
+
+            // Panel con vista previa + botón descargar
+            mostrarTicketConDescarga(ticket, numReserva);
         });
 
         p.add(new JLabel("Buscar origen/destino:"));
@@ -204,19 +209,92 @@ public class TripTravelGUI extends JFrame {
         p.add(btnBuscar);
         p.add(btnTodos);
 
-        p.add(new JLabel("Fecha:"));
+        p.add(new JLabel("Fecha (dd/MM/yyyy):"));
         p.add(fecha);
         p.add(reservar);
 
         return p;
     }
 
+    /**
+     * Muestra el ticket en un diálogo con botones "Descargar .txt" y "Cerrar".
+     */
+    private void mostrarTicketConDescarga(String ticket, String numReserva) {
+        JDialog dialog = new JDialog(this, "Confirmación de Reserva", true);
+        dialog.setLayout(new BorderLayout(10, 10));
+        dialog.setSize(480, 420);
+        dialog.setLocationRelativeTo(this);
+
+        // Área de texto con el ticket
+        JTextArea area = new JTextArea(ticket);
+        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+        area.setEditable(false);
+        area.setMargin(new Insets(10, 14, 10, 14));
+        dialog.add(new JScrollPane(area), BorderLayout.CENTER);
+
+        // Panel de botones
+        JPanel botones = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
+
+        JButton btnDescargarTxt = new JButton("⬇  Descargar .txt");
+        btnDescargarTxt.setBackground(new Color(30, 130, 60));
+        btnDescargarTxt.setForeground(Color.WHITE);
+        btnDescargarTxt.setFocusPainted(false);
+
+        JButton btnCerrar = new JButton("Cerrar");
+
+        btnDescargarTxt.addActionListener(ev -> descargarTxt(ticket, numReserva, dialog));
+        btnCerrar.addActionListener(ev -> dialog.dispose());
+
+        botones.add(btnDescargarTxt);
+        botones.add(btnCerrar);
+        dialog.add(botones, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Abre un JFileChooser y guarda el ticket como archivo .txt.
+     */
+    private void descargarTxt(String ticket, String numReserva, JDialog parent) {
+        JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle("Guardar ticket");
+        fc.setSelectedFile(new File("ticket_" + numReserva + ".txt"));
+
+        // Filtro para archivos .txt
+        fc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                "Archivos de texto (*.txt)", "txt"));
+
+        int resultado = fc.showSaveDialog(parent);
+
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivo = fc.getSelectedFile();
+
+            // Añadir extensión .txt si el usuario no la escribió
+            if (!archivo.getName().toLowerCase().endsWith(".txt")) {
+                archivo = new File(archivo.getAbsolutePath() + ".txt");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(archivo), "UTF-8"))) {
+                writer.write(ticket);
+                JOptionPane.showMessageDialog(parent,
+                        "Ticket guardado en:\n" + archivo.getAbsolutePath(),
+                        "Descarga completada",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(parent,
+                        "Error al guardar el archivo:\n" + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     private void actualizarSaldo() {
-        saldoLabel.setText("Saldo: " + saldo + " EUR");
+        saldoLabel.setText(String.format("Saldo: %.2f EUR", saldo));
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(TripTravelGUI::new);
     }
 }
-//
