@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyDreams - Agencia de Vuelos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        header {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover { color: #00c6ff; }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                        url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
+        .hero p { font-size: 18px; margin-bottom: 30px; }
+
+        .hero button {
+            padding: 12px 25px;
+            border: none;
+            background: #00c6ff;
+            color: white;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero button:hover { background: #0072ff; }
+
+        /* BUDGET BAR */
+        #budget-bar {
+            display: none;
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            position: sticky;
+            top: 60px;
+            z-index: 900;
+        }
+
+        #budget-bar span { color: #00c6ff; }
+
+        /* SEARCH BOX */
+        .search-box {
+            background: white;
+            margin: -80px auto 40px;
+            padding: 30px;
+            width: 85%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-box h2 { margin-bottom: 20px; }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .form input, .form select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form button {
+            padding: 12px;
+            border: none;
+            background: #1e3c72;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .form button:hover { background: #00c6ff; }
+
+        /* RESULTS */
+        #buscador-vuelos {
+            margin-top: 25px;
+        }
+
+        .result-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        .viaje-card {
+            border: 1px solid #e0e7ef;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 14px;
+            background: #f8fbff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            transition: box-shadow 0.2s;
+        }
+
+        .viaje-card:hover { box-shadow: 0 4px 18px rgba(30,60,114,0.13); }
+
+        .viaje-info { flex: 1; }
+
+        .viaje-tipo {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+        }
+
+        .tipo-vuelo { background: #e3f0ff; color: #1e3c72; }
+        .tipo-bus { background: #e8f8e8; color: #1a7a1a; }
+        .tipo-barco { background: #e8f0ff; color: #3a3ab8; }
+        .tipo-metro { background: #fff3e3; color: #b85c00; }
+
+        .viaje-ruta {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .viaje-hotel {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .viaje-id {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .viaje-precio {
+            text-align: right;
+        }
+
+        .precio-total {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .precio-base {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .btn-reservar {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #00c6ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-reservar:hover { background: #0072ff; }
+        .btn-reservar:disabled { background: #ccc; cursor: not-allowed; }
+
+        .no-results {
+            color: #888;
+            font-style: italic;
+            padding: 10px 0;
+        }
+
+        /* FEATURES */
+        .features {
+            padding: 60px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 85%;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { margin-bottom: 10px; }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            color: #1e3c72;
+            margin-bottom: 18px;
+        }
+
+        .modal label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            margin-bottom: 18px;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            padding: 10px 22px;
+            background: #eee;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            padding: 10px 22px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-confirm:hover { background: #00c6ff; }
+
+        .modal-error {
+            color: #c0392b;
+            font-size: 13px;
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
+        /* TICKET */
+        .ticket {
+            background: #f0f8ff;
+            border: 2px dashed #00c6ff;
+            border-radius: 12px;
+            padding: 22px;
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .ticket-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #1e3c72;
+            border-bottom: 1px solid #b0d4ef;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ticket-row span:first-child { color: #888; }
+        .ticket-row span:last-child { font-weight: 600; color: #1e3c72; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">✈️ SkyDreams</div>
+    <nav>
+        <a onclick="scrollTo(0,0)">Inicio</a>
+        <a onclick="document.querySelector('.search-box').scrollIntoView({behavior:'smooth'})">Vuelos</a>
+        <a onclick="mostrarCatalogo()">Catálogo</a>
+        <a onclick="document.querySelector('footer').scrollIntoView({behavior:'smooth'})">Contacto</a>
+    </nav>
+</header>
+
+<div id="budget-bar">
+    💰 Presupuesto disponible: <span id="saldo-display">0.00 €</span>
+</div>
+
+<section class="hero">
+    <h1>Vuela por el mundo al mejor precio</h1>
+    <p>Encuentra ofertas increíbles en vuelos en segundos</p>
+    <button onclick="abrirModalPresupuesto()">Buscar ahora</button>
+</section>
+
+<section class="search-box">
+    <h2>Buscar viajes</h2>
+    <div class="form">
+        <input type="text" id="inp-origen" placeholder="Origen (ej: Barcelona)">
+        <input type="text" id="inp-destino" placeholder="Destino (ej: Paris)">
+        <input type="date" id="inp-fecha-ida">
+        <input type="date" id="inp-fecha-vuelta">
+        <select id="inp-pasajeros">
+            <option>1 pasajero</option>
+            <option>2 pasajeros</option>
+            <option>3 pasajeros</option>
+        </select>
+        <button onclick="buscarViajes()">🔍 Buscar</button>
+    </div>
+    <div id="buscador-vuelos"></div>
+</section>
+
+<section class="features">
+    <div class="card">
+        <h3>✈️ Mejores precios</h3>
+        <p>Comparamos todos nuestros viajes para darte el mejor precio.</p>
+    </div>
+    <div class="card">
+        <h3>🌍 Destinos globales</h3>
+        <p>Viaja a cualquier parte del mundo fácilmente.</p>
+    </div>
+    <div class="card">
+        <h3>⚡ Reserva rápida</h3>
+        <p>Encuentra y reserva tu viaje en pocos segundos.</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 SkyDreams - Agencia de viajes TripTravel</p>
+</footer>
+
+<!-- MODAL PRESUPUESTO -->
+<div class="modal-overlay" id="modal-presupuesto">
+    <div class="modal">
+        <h3>💳 Introduce tu presupuesto</h3>
+        <label>Presupuesto disponible (€)</label>
+        <input type="number" id="inp-presupuesto" placeholder="Ej: 500" min="0" step="0.01">
+        <div class="modal-error" id="err-presupuesto"></div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="cerrarModal('modal-presupuesto')">Cancelar</button>
+            <button class="btn-confirm" onclick="confirmarPresupuesto()">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RESERVA -->
+<div class="modal-overlay" id="modal-reserva">
+    <div class="modal">
+        <h3 id="modal-reserva-titulo">Reservar viaje</h3>
+        <label>Fecha del viaje</label>
+        <input type="date" id="inp-fecha-reserva">
+        <div class="modal-error" id="err-reserva"></div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="cerrarModal('modal-reserva')">Cancelar</button>
+            <button class="btn-confirm" onclick="confirmarReserva()">Reservar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TICKET -->
+<div class="modal-overlay" id="modal-ticket">
+    <div class="modal">
+        <h3>🎫 Reserva confirmada</h3>
+        <div id="ticket-contenido"></div>
+        <br>
+        <div class="modal-btns">
+            <button class="btn-confirm" onclick="cerrarModal('modal-ticket')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// =============================================
+// DATOS (portados desde Java)
+// =============================================
+
+const hoteles = {
+    hSevilla:    { nombre: "Hotel Giralda",       precioNoche: 140 },
+    hValencia:   { nombre: "Hotel Mediterráneo",  precioNoche: 150 },
+    hBilbao:     { nombre: "Hotel Guggenheim",    precioNoche: 170 },
+    hIbiza:      { nombre: "Ushuaia Beach",        precioNoche: 220 },
+    hParis:      { nombre: "Le Meurice Paris",    precioNoche: 300 },
+    hRoma:       { nombre: "Roma Imperial",        precioNoche: 250 },
+    hLondres:    { nombre: "The Ritz London",      precioNoche: 350 },
+    hBerlin:     { nombre: "Berlin Central",       precioNoche: 220 },
+    hTokio:      { nombre: "Park Hyatt Tokyo",     precioNoche: 450 },
+    hNewYork:    { nombre: "Times Square Hotel",   precioNoche: 520 },
+    hLisboa:     { nombre: "Lisboa Palace",        precioNoche: 210 },
+    hAmsterdam:  { nombre: "Canal View Hotel",     precioNoche: 280 },
+    hViena:      { nombre: "Vienna Royal",         precioNoche: 260 },
+    hPraga:      { nombre: "Prague Center",        precioNoche: 230 },
+    hAtenas:     { nombre: "Athens Classic",       precioNoche: 240 },
+    hBruselas:   { nombre: "Brussels Grand",       precioNoche: 250 },
+    hZurich:     { nombre: "Zurich Elite",         precioNoche: 320 },
+    hDublin:     { nombre: "Dublin Green",         precioNoche: 245 },
+    hEstocolmo:  { nombre: "Nordic Sky",           precioNoche: 310 },
+};
+
+function calcularPrecio(v) {
+    let total = v.precioBase;
+    if (v.tipo === 'vuelo') total += v.tasa;
+    if (v.tipo === 'barco') total += v.camarote ? 50 : 0;
+    if (v.tipo === 'metro') total += v.paradas * 0.10;
+    if (v.hotel) total += v.hotel.precioNoche;
+    return total;
+}
+
+const viajes = [
+    // NACIONALES
+    { id:"ESP-01", tipo:"bus",   origen:"Barcelona",  destino:"Valencia",  precioBase:28,  hotel: hoteles.hValencia  },
+    { id:"ESP-02", tipo:"bus",   origen:"Granada",    destino:"Sevilla",   precioBase:22,  hotel: hoteles.hSevilla   },
+    { id:"ESP-03", tipo:"vuelo", origen:"Malaga",     destino:"Bilbao",    precioBase:75,  tasa:18, hotel: hoteles.hBilbao   },
+    { id:"ESP-04", tipo:"barco", origen:"Valencia",   destino:"Ibiza",     precioBase:65,  camarote:true, hotel: hoteles.hIbiza },
+    { id:"ESP-05", tipo:"metro", origen:"Hospitalet", destino:"Barcelona", precioBase:12,  paradas:10, hotel: null },
+
+    // INTERNACIONALES
+    { id:"INT-01", tipo:"vuelo", origen:"Barcelona",  destino:"Paris",     precioBase:95,  tasa:20, hotel: hoteles.hParis    },
+    { id:"INT-02", tipo:"vuelo", origen:"Valencia",   destino:"Roma",      precioBase:105, tasa:22, hotel: hoteles.hRoma     },
+    { id:"INT-03", tipo:"vuelo", origen:"Bilbao",     destino:"Londres",   precioBase:120, tasa:28, hotel: hoteles.hLondres  },
+    { id:"INT-04", tipo:"vuelo", origen:"Malaga",     destino:"Berlin",    precioBase:115, tasa:25, hotel: hoteles.hBerlin   },
+    { id:"INT-05", tipo:"vuelo", origen:"Barcelona",  destino:"Tokio",     precioBase:780, tasa:60, hotel: hoteles.hTokio    },
+    { id:"INT-06", tipo:"vuelo", origen:"Sevilla",    destino:"New York",  precioBase:690, tasa:55, hotel: hoteles.hNewYork  },
+
+    // CONTINENTALES
+    { id:"CON-01", tipo:"vuelo", origen:"Madrid",     destino:"Lisboa",    precioBase:85,  tasa:18, hotel: hoteles.hLisboa   },
+    { id:"CON-02", tipo:"vuelo", origen:"Barcelona",  destino:"Amsterdam", precioBase:140, tasa:25, hotel: hoteles.hAmsterdam},
+    { id:"CON-03", tipo:"vuelo", origen:"Valencia",   destino:"Viena",     precioBase:155, tasa:26, hotel: hoteles.hViena    },
+    { id:"CON-04", tipo:"vuelo", origen:"Sevilla",    destino:"Praga",     precioBase:160, tasa:28, hotel: hoteles.hPraga    },
+    { id:"CON-05", tipo:"vuelo", origen:"Bilbao",     destino:"Atenas",    precioBase:180, tasa:30, hotel: hoteles.hAtenas   },
+    { id:"CON-06", tipo:"vuelo", origen:"Malaga",     destino:"Bruselas",  precioBase:145, tasa:24, hotel: hoteles.hBruselas },
+    { id:"CON-07", tipo:"vuelo", origen:"Madrid",     destino:"Zurich",    precioBase:170, tasa:27, hotel: hoteles.hZurich   },
+    { id:"CON-08", tipo:"vuelo", origen:"Barcelona",  destino:"Dublin",    precioBase:165, tasa:29, hotel: hoteles.hDublin   },
+    { id:"CON-09", tipo:"vuelo", origen:"Valencia",   destino:"Estocolmo", precioBase:210, tasa:35, hotel: hoteles.hEstocolmo},
+];
+
+// =============================================
+// ESTADO
+// =============================================
+let presupuesto = null;
+let viajeSeleccionado = null;
+
+// =============================================
+// ICONOS Y ETIQUETAS
+// =============================================
+const tipoInfo = {
+    vuelo: { icon: "✈️", label: "Avión",  css: "tipo-vuelo" },
+    bus:   { icon: "🚌", label: "Bus",    css: "tipo-bus"   },
+    barco: { icon: "⛴️", label: "Barco",  css: "tipo-barco" },
+    metro: { icon: "🚇", label: "Metro",  css: "tipo-metro" },
+};
+
+// =============================================
+// RENDER TARJETAS
+// =============================================
+function renderTarjetas(lista) {
+    const container = document.getElementById('buscador-vuelos');
+    if (!lista.length) {
+        container.innerHTML = '<p class="no-results">No se encontraron viajes con ese criterio.</p>';
+        return;
+    }
+
+    container.innerHTML = `<p class="result-title">${lista.length} viaje(s) encontrado(s)</p>`;
+
+    lista.forEach(v => {
+        const precio = calcularPrecio(v);
+        const info = tipoInfo[v.tipo];
+        const puedeReservar = presupuesto !== null && presupuesto >= precio;
+        const sinPresupuesto = presupuesto === null;
+
+        const card = document.createElement('div');
+        card.className = 'viaje-card';
+        card.innerHTML = `
+            <div class="viaje-info">
+                <span class="viaje-tipo ${info.css}">${info.icon} ${info.label}</span>
+                <div class="viaje-ruta">${v.origen} → ${v.destino}</div>
+                ${v.hotel ? `<div class="viaje-hotel">🏨 ${v.hotel.nombre} (${v.hotel.precioNoche} €/noche)</div>` : '<div class="viaje-hotel">Sin hotel incluido</div>'}
+                <div class="viaje-id">ID: ${v.id}</div>
+            </div>
+            <div class="viaje-precio">
+                <div class="precio-total">${precio.toFixed(2)} €</div>
+                <div class="precio-base">Precio base: ${v.precioBase} €</div>
+                <button class="btn-reservar"
+                    ${(!puedeReservar && !sinPresupuesto) ? 'disabled title="Saldo insuficiente"' : ''}
+                    onclick="iniciarReserva('${v.id}')">
+                    ${sinPresupuesto ? 'Añade presupuesto' : puedeReservar ? 'Reservar' : '❌ Saldo insuficiente'}
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// =============================================
+// BUSCAR VIAJES
+// =============================================
+function buscarViajes() {
+    const origen = document.getElementById('inp-origen').value.trim().toLowerCase();
+    const destino = document.getElementById('inp-destino').value.trim().toLowerCase();
+
+    let resultado = viajes;
+
+    if (origen) resultado = resultado.filter(v => v.origen.toLowerCase().includes(origen));
+    if (destino) resultado = resultado.filter(v => v.destino.toLowerCase().includes(destino));
+
+    document.querySelector('.search-box').scrollIntoView({ behavior: 'smooth' });
+    renderTarjetas(resultado);
+}
+
+function mostrarCatalogo() {
+    document.getElementById('inp-origen').value = '';
+    document.getElementById('inp-destino').value = '';
+    document.querySelector('.search-box').scrollIntoView({ behavior: 'smooth' });
+    renderTarjetas(viajes);
+}
+
+// =============================================
+// MODAL PRESUPUESTO
+// =============================================
+function abrirModalPresupuesto() {
+    document.getElementById('err-presupuesto').textContent = '';
+    document.getElementById('inp-presupuesto').value = presupuesto !== null ? presupuesto : '';
+    document.getElementById('modal-presupuesto').classList.add('active');
+}
+
+function confirmarPresupuesto() {
+    const val = parseFloat(document.getElementById('inp-presupuesto').value);
+    if (isNaN(val) || val < 0) {
+        document.getElementById('err-presupuesto').textContent = 'Introduce una cantidad válida (≥ 0).';
+        return;
+    }
+    presupuesto = val;
+    cerrarModal('modal-presupuesto');
+    actualizarBarraSaldo();
+    document.querySelector('.search-box').scrollIntoView({ behavior: 'smooth' });
+    renderTarjetas(viajes);
+}
+
+function actualizarBarraSaldo() {
+    const bar = document.getElementById('budget-bar');
+    if (presupuesto !== null) {
+        bar.style.display = 'block';
+        document.getElementById('saldo-display').textContent = presupuesto.toFixed(2) + ' €';
+    }
+}
+
+// =============================================
+// MODAL RESERVA
+// =============================================
+function iniciarReserva(id) {
+    if (presupuesto === null) {
+        abrirModalPresupuesto();
+        return;
+    }
+    viajeSeleccionado = viajes.find(v => v.id === id);
+    const precio = calcularPrecio(viajeSeleccionado);
+    document.getElementById('modal-reserva-titulo').textContent =
+        `Reservar: ${viajeSeleccionado.origen} → ${viajeSeleccionado.destino} (${precio.toFixed(2)} €)`;
+    document.getElementById('err-reserva').textContent = '';
+    document.getElementById('inp-fecha-reserva').value = '';
+    document.getElementById('modal-reserva').classList.add('active');
+}
+
+function confirmarReserva() {
+    const fechaVal = document.getElementById('inp-fecha-reserva').value;
+    if (!fechaVal) {
+        document.getElementById('err-reserva').textContent = 'Selecciona una fecha.';
+        return;
+    }
+    const fecha = new Date(fechaVal);
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    if (fecha <= hoy) {
+        document.getElementById('err-reserva').textContent = 'La fecha debe ser futura.';
+        return;
+    }
+
+    const precio = calcularPrecio(viajeSeleccionado);
+    if (presupuesto < precio) {
+        document.getElementById('err-reserva').textContent = 'Saldo insuficiente.';
+        return;
+    }
+
+    presupuesto -= precio;
+    cerrarModal('modal-reserva');
+    actualizarBarraSaldo();
+    mostrarTicket(viajeSeleccionado, fecha, precio);
+    renderTarjetas(viajes);
+}
+
+// =============================================
+// TICKET
+// =============================================
+function mostrarTicket(v, fecha, precio) {
+    const fechaStr = fecha.toLocaleDateString('es-ES');
+    let html = `
+        <div class="ticket">
+            <div class="ticket-title">🎫 TICKET DE VIAJE</div>
+            <div class="ticket-row"><span>ID</span><span>${v.id}</span></div>
+            <div class="ticket-row"><span>Origen</span><span>${v.origen}</span></div>
+            <div class="ticket-row"><span>Destino</span><span>${v.destino}</span></div>
+            <div class="ticket-row"><span>Fecha</span><span>${fechaStr}</span></div>
+            <div class="ticket-row"><span>Precio viaje</span><span>${precio.toFixed(2)} €</span></div>`;
+
+    if (v.hotel) {
+        html += `
+            <br>
+            <div class="ticket-title">🏨 HOTEL INCLUIDO</div>
+            <div class="ticket-row"><span>Hotel</span><span>${v.hotel.nombre}</span></div>
+            <div class="ticket-row"><span>Precio/noche</span><span>${v.hotel.precioNoche.toFixed(2)} €</span></div>`;
+    }
+
+    html += `
+            <br>
+            <div class="ticket-title">💰 SALDO</div>
+            <div class="ticket-row"><span>Saldo restante</span><span>${presupuesto.toFixed(2)} €</span></div>
+        </div>`;
+
+    document.getElementById('ticket-contenido').innerHTML = html;
+    document.getElementById('modal-ticket').classList.add('active');
+}
+
+// =============================================
+// UTILS
+// =============================================
+function cerrarModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// Cerrar modal al hacer clic fuera
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('active');
+    });
+});
+
+// Enter en campos de búsqueda
+document.getElementById('inp-origen').addEventListener('keydown', e => { if(e.key==='Enter') buscarViajes(); });
+document.getElementById('inp-destino').addEventListener('keydown', e => { if(e.key==='Enter') buscarViajes(); });
+</script>
+</body>
+</html>
